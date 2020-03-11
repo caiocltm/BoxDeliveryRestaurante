@@ -32,11 +32,11 @@ const GraphQLServer = new ApolloServer({
 	cors: true, // Pass the integration-specific CORS options: uses the defaults.
 	playground: ENV.ENVIRONMENT !== 'prod', // Enables and disables Apollo Server Playground. Disabled in production by default.
 	debug: ENV.ENVIRONMENT !== 'prod', // Enables and disables GraphQL Server debug option. Disabled in production by default.
-	formatError: (error) => {
+	formatError: ({ message, path, extensions }) => {
 		const format = {
-			message: error.message,
-			code: error.extensions.code,
-			path: error.path
+			message,
+			code: extensions.code,
+			path
 		};
 		Log.error({ ...format });
 		return format;

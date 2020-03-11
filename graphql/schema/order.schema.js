@@ -10,6 +10,11 @@ module.exports = gql`
     type Order {
 
         """
+            Auto generated order ID.
+        """
+        id: ID
+        
+        """
             Client cellphone number.
         """
         cellphone_number: String!
@@ -129,9 +134,9 @@ module.exports = gql`
     }
 
     """
-        Input type definition for Order objects.
+        Input type definition for Order creation object.
     """
-    input InputOrder {
+    input CreateOrderInput {
 
         """
             Client cellphone number.
@@ -223,19 +228,122 @@ module.exports = gql`
     }
 
     """
+        Input type definition for Order updating object.
+    """
+    input UpdateOrderInput {
+        
+        """
+            Auto generated order ID.
+        """
+        id: ID
+
+        """
+            Client cellphone number.
+        """
+        cellphone_number: String
+
+        """
+            Client name.
+        """
+		client_name: String
+
+        """
+            Client ZIP/CEP code.
+        """
+		zip_code: String
+
+        """
+            Client address.
+        """
+		client_address: String
+
+        """
+            Client address number.
+        """
+		address_number: String
+
+        """
+            Client address complement.
+        """
+		address_complement: String
+
+        """
+            Type of delivery: 
+            - Normal
+            - Malote
+        """
+		delivery_type: String
+
+        """
+            Payment type: 
+            - Cash
+            - Credit
+            - Debit
+            - Online
+            - VR
+        """
+		payment: String
+
+        """
+            Order total amount.
+        """
+        order_value: Float
+        
+        """
+            Total amount to be paid (Cash).
+        """
+		change_to: Float
+
+        """
+            Order observations.
+        """
+		observations: String
+
+        """
+            Optional: If necessary a cool box.
+        """
+		cool_box: Boolean
+
+        """
+            Optional: If necessary to return.
+        """
+		return: Boolean
+
+        """
+            Optional: If necessary a signature.
+        """
+		signature: Boolean
+
+        """
+            Optional: Rain.
+        """
+		rain: Boolean
+
+        """
+            Geolocation info.
+        """
+        geolocation: GeolocationInput
+
+    }
+
+    """
         Queries definition to Order Schema.
     """
     type Query {
 
         """
             Returns a order which has the ID specified by parameter.
+
+            @returns null if has no orders registered.
         """
-        getOrderById(orderId: ID!): Order!
+        getOrderById(orderId: ID!): Order
 
         """
             Returns one or more orders.
+
+            @returns [] if has no orders registered.
         """
-        getAllOrders: [Order!]!
+        getAllOrders: [Order]
         
     }
 
@@ -245,19 +353,23 @@ module.exports = gql`
     type Mutation {
 
         """
-            Create one or more orders and return all the orders created, if the operation terminated successfully.
+            Create one or more orders, if the operation terminated successfully all the created orders will be returned.
         """
-        createOrder(order: [InputOrder!]): [Order!]
+        createOrder(order: [CreateOrderInput!]): [Order!]
 
         """
-            Update one order and return the created oreder, if the operation terminated successfully.
+            Update one order, if the operation terminated successfully the updated order will be returned.
+
+            @warning: Order specified must be registered in the database.
         """
-        updateOrder(order: InputOrder): [Order!]
+        updateOrder(order: UpdateOrderInput!): Order
 
         """ 
-            Delete one or more orders and return true/false, if the operation terminated successfully/error.
+            Delete one or more orders and return true/false, if the operation terminated successfully/failure.
+
+            @warning: Order ID specified must be registered in the database.
         """
-        deleteOrder(ordersIds: [ID!]): Boolean
+        deleteOrder(orderIds: [ID!]): Boolean
 
     }
 

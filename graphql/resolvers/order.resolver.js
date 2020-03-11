@@ -1,5 +1,5 @@
-const Order = require('../../database/models/order.model');
 const { ApolloError } = require('apollo-server');
+const Order = require('../../database/models/order.model');
 
 module.exports = {
 
@@ -7,7 +7,7 @@ module.exports = {
 
 		getOrderById: async (_, { orderId }, ___, ____) => {
 			try {
-				return await Order.find({ _id: orderId });
+				return await Order.findOne({ _id: orderId });
 			} catch (error) {
 				return new ApolloError(error);
 			}
@@ -27,35 +27,48 @@ module.exports = {
 		createOrder: async (_, orders, ___, ____) => {
 			try {
 				if(orders.order.length > 1) {
-					let createdOrders = [];
-					orders.order.forEach(async order => {
-						let newOrder = new Order(order);
-						createdOrders.push(await newOrder.save());
+					const newOrders = await Order.insertMany(orders.order);
+					return newOrders.map(order => {
+						return {
+							id: order._id,
+							...order._doc
+						};
 					});
-					return createdOrders;
 				} else {
-					const newOrder = new Order(orders.order[0]);
-					return [await newOrder.save()];
+					const newOrder = await new Order(orders.order[0]).save();
+					return [{
+						id: newOrder._id,
+						...newOrder._doc
+					}];
 				}
 			} catch (error) {
 				return new ApolloError(error);
 			}
 		},
 
-		updateOrder: async (_, order, ___, ____) => {
+		updateOrder: async (_, { order }, ___, ____) => {
 			try {
-				console.log(order);
-				return await Order.updateOne({ _id: order._id }, order);
+				let orderUpdated = await Order.findOneAndUpdate({ _id: order.id }, order, { new: true });
+				if(orderUpdated) return orderUpdated;
+				else return new ApolloError(`Order ID ${order.id} is not registered, please inform a valid ID.`);
 			} catch (error) {
 				return new ApolloError(error);
 			}
 		},
 
-		deleteOrder: async (_, orders, ___, ____) => {
+		deleteOrder: async (_, { orderIds }, ___, ____) => {
 			try {
-				console.log(orders);
-				if(orders.length) return await Order.deleteMany(orders);
-				else return await Order.deleteOne({ _id: orders._id });
+				console.log(orderIds, orderIds.length);
+				if(orderIds.length > 1) 
+					return (
+						await Order.deleteMany({ _id: orderIds })
+					).ok === 1 ? true : false;
+				else  
+					return (
+						await Order.deleteOne({
+							_id: (orderIds instanceof Array ? orderIds[0] : orderIds)
+						})
+					).ok === 1 ? true : false;
 			} catch (error) {
 				return new ApolloError(error);
 			}
