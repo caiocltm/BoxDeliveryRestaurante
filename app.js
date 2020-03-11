@@ -8,7 +8,7 @@ const GraphQLServer = require('./graphql/server/graphql.server');
 const MongoDB = require("./database/mongodb");
 
 // Logger
-const Log = require('./modules/Log/log');
+const Log = require('./modules/log/log');
 
 // Initializing Mongoose (MongoDB) connection, sync and starting the apollo server.
 MongoDB.connect(ENV.DATABASE.URL)
