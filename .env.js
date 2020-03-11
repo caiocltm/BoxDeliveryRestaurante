@@ -5,7 +5,8 @@ module.exports = {
 	ENVIRONMENT: 'dev',
 
 	DATABASE: {
-		URL: 'mongodb://localhost:27017/box-delivery-restaurante'
+		// URL: 'mongodb://localhost:27017/',
+		URL: 'mongodb+srv://caioMenezes:159875300@clustercaio-plzwq.mongodb.net/box-delivery-restaurante?retryWrites=true&w=majority'
 	},
 
 	LOG: {

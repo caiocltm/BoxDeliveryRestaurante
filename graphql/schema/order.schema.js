@@ -358,16 +358,16 @@ module.exports = gql`
         createOrder(order: [CreateOrderInput!]): [Order!]
 
         """
-            Update one order, if the operation terminated successfully the updated order will be returned.
+            Update one order and return true/false, if the operation terminated successfully/failure.
 
-            @warning: Order specified must be registered in the database.
+            @validation: Order ID must exist in database, if not, will return false.
         """
-        updateOrder(order: UpdateOrderInput!): Order
+        updateOrder(order: UpdateOrderInput!): Boolean
 
         """ 
             Delete one or more orders and return true/false, if the operation terminated successfully/failure.
 
-            @warning: Order ID specified must be registered in the database.
+            @validation: Order IDs must exist in database, if not, will return false.
         """
         deleteOrder(orderIds: [ID!]): Boolean
 

@@ -49,8 +49,8 @@ module.exports = {
 		updateOrder: async (_, { order }, ___, ____) => {
 			try {
 				let orderUpdated = await Order.findOneAndUpdate({ _id: order.id }, order, { new: true });
-				if(orderUpdated) return orderUpdated;
-				else return new ApolloError(`Order ID ${order.id} is not registered, please inform a valid ID.`);
+				if(orderUpdated) return true;
+				else return false;
 			} catch (error) {
 				return new ApolloError(error);
 			}
@@ -58,17 +58,15 @@ module.exports = {
 
 		deleteOrder: async (_, { orderIds }, ___, ____) => {
 			try {
-				console.log(orderIds, orderIds.length);
-				if(orderIds.length > 1) 
-					return (
-						await Order.deleteMany({ _id: orderIds })
-					).ok === 1 ? true : false;
-				else  
-					return (
-						await Order.deleteOne({
-							_id: (orderIds instanceof Array ? orderIds[0] : orderIds)
-						})
-					).ok === 1 ? true : false;
+				if(orderIds.length > 1) {
+					let result = await Order.deleteMany({ _id: orderIds });	
+					return result.ok === 1 && result.deletedCount > 0 ? true : false;
+				} else {
+					let result = await Order.deleteOne({
+						_id: (orderIds instanceof Array ? orderIds[0] : orderIds)
+					});
+					return result.ok === 1 && result.deletedCount > 0 ? true : false;
+				}  
 			} catch (error) {
 				return new ApolloError(error);
 			}
