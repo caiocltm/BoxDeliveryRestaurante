@@ -1,6 +1,6 @@
 module.exports = {
 
-	GRAPHQL_SERVER_PORT: 443,
+	GRAPHQL_SERVER_PORT: 80,
 
 	ENVIRONMENT: 'dev',
 
