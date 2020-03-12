@@ -14,7 +14,7 @@ const Log = require('./modules/log/log');
 MongoDB.connect(ENV.DATABASE.URL)
 .then(async () => {
 	console.info(`Connected to MongoDB Server: ${ENV.DATABASE.URL}`);
-	GraphQLServer.listen(ENV.GRAPHQL_SERVER_PORT)
+	GraphQLServer.listen(process.env.PORT || ENV.GRAPHQL_SERVER_PORT)
 	.then(({url, subscriptionsUrl }) => {
 		console.info(`GraphQLServer ready at ${url}graphql`);
 		console.info(`GraphQLServer subscriptions ready at ${subscriptionsUrl}`);
